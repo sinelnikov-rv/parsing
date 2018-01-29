@@ -1,11 +1,15 @@
 var request = require('request');
-var URL = 'http://yuzhcable.info/index.php';
-request(URL, function(err,res,body){
-    var reg = /CAT=[0-9]+.*\/a/
-    //var test_index = body.indexOf("CAT");
-    var er = body.match(reg);
-    var test = reg.test(body);
-    console.log(test);
-    console.log(er);
-    //return body;    
+var iconv = require('iconv-lite')
+var cheerio = require('cheerio');
+var opt = {
+    url: 'http://yuzhcable.info/index.php',
+    encoding: null
+}
+request(opt, function(err,res,body){
+    var $ = cheerio.load(iconv.decode(body,'win1251'));
+    var categories = $('.UK_Menu4b >a');
+    console.log(categories[0].attribs.href);
+    //for(i=0;i<categories.length;i++){
+    //    console.log(categories[i].attribs.title);
+    //}
 });
