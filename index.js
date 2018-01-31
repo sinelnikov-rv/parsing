@@ -9,32 +9,33 @@ var opt = {
 
 var categories =[];
 var array =[];
-
-request(opt, function(err,res,body){
+return new Promise(resolve => {request(opt, function(err,res,body){
+    resolve(body);
     var $ = cheerio.load(iconv.decode(body,'win1251'));
-    var categories = $('.UK_Menu4b');
-    //console.log(categories[0]);
-    for(var i=0;i<categories.length;i++){
-        const j = i;
-        var newOpt = {
-            url: opt.url + categories[i].attribs.href,
-            encoding: null
-        }
-        request(newOpt,function(err,res,body){
-            var $ = cheerio.load(iconv.decode(body,'win1251'));
-            var cable = $('.UK_Tblb > a');
-            array.push({
-                name: cable[0].children[0].data,
-                categorie: categories[j].children[0].data
-            })
-            console.log(array[0]);
-            //console.log(cable[0].children[0].data + ', ' + categories[j].children[0].data);
-        })
-        
-    }
     
-    //console.log(categories[0].attribs.href);
-    //for(i=0;i<categories.length;i++){
-    //    console.log(categories[i].attribs.title);
-    //}
-});
+    var categoriesTitle = $('.UK_Menu4b');
+    for(var i=0; i<categoriesTitle.length;i++){
+        categories.push({
+            title: categoriesTitle[i].attribs.title,
+            link: categoriesTitle[i].children[0].attribs.href
+        })
+    }
+    /* for(var i=0;i<categories.length;i++){
+         const j = i;
+         var newOpt = {
+             url: opt.url + categories[i].attribs.href,
+             encoding: null
+         }
+         request(newOpt,function(err,res,body){
+             var $ = cheerio.load(iconv.decode(body,'win1251'));
+             var cable = $('.UK_Tblb > a');
+             array.push({
+                 name: cable[0].children[0].data,
+                 categorie: categories[j].children[0].data
+             })
+             console.log(array[0]);
+    })
+    }
+*/
+})
+}).then(value =>{console.log(categories)})
