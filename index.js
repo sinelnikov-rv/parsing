@@ -8,7 +8,7 @@ var opt = {
 }
 
 var categories =[];
-var array =[];
+var cables =[];
 let promise = new Promise(resolve => {request(opt, function(err,res,body){
     resolve(body);
     var $ = cheerio.load(iconv.decode(body,'win1251'));
@@ -20,23 +20,27 @@ let promise = new Promise(resolve => {request(opt, function(err,res,body){
             link: categoriesTitle[i].children[0].attribs.href
         })
     }
-    /* for(var i=0;i<categories.length;i++){
-         const j = i;
-         var newOpt = {
-             url: opt.url + categories[i].attribs.href,
+})
+})
+promise.then(value =>{
+    for(var i=0; i<categories.length;i++){
+        let j=i;
+        var newOpt = {
+             url: opt.url + categories[i].link,
              encoding: null
          }
          request(newOpt,function(err,res,body){
              var $ = cheerio.load(iconv.decode(body,'win1251'));
-             var cable = $('.UK_Tblb > a');
-             array.push({
-                 name: cable[0].children[0].data,
-                 categorie: categories[j].children[0].data
+             var cablesTitle = $('.UK_Tblb');
+             var cablesDescription = $('.UK_Tbll');
+             for(var i = 0; i<cablesTitle.length;i++){
+            cables.push({
+                title: cablesTitle[i].children[0].children[0].data,
+                categorie: categories[j].title,
+                description: cablesDescription[i].children[0].data,
              })
-             console.log(array[0]);
-    })
+            }
+             //console.log(cables);
+         })
     }
-*/
 })
-})
-promise.then(value =>{console.log(categories)})
