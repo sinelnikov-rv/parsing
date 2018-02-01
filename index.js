@@ -9,7 +9,7 @@ var opt = {
 
 var categories =[];
 var array =[];
-return new Promise(resolve => {request(opt, function(err,res,body){
+let promise = new Promise(resolve => {request(opt, function(err,res,body){
     resolve(body);
     var $ = cheerio.load(iconv.decode(body,'win1251'));
     
@@ -38,4 +38,5 @@ return new Promise(resolve => {request(opt, function(err,res,body){
     }
 */
 })
-}).then(value =>{console.log(categories)})
+})
+promise.then(value =>{console.log(categories)})
