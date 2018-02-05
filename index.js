@@ -2,7 +2,7 @@ var request = require('request');
 var iconv = require('iconv-lite')
 var cheerio = require('cheerio');
 var fs = require('fs');
-var file = 'tet.txt';
+var file = 'test.txt';
 var opt = {
     url: 'http://yuzhcable.info/',
     encoding: null
@@ -23,27 +23,31 @@ return new Promise(resolve => {request(opt, function(err,res,body){
         })
     }
 })
-}).then(value =>{
+}).then(value =>{return new Promise(resolve =>{ 
     for(var i=0; i<categories.length;i++){
         let j=i;
         var newOpt = {
              url: opt.url + categories[i].link,
              encoding: null
          }
-         request(newOpt,function(err,res,body){
+          request(newOpt,function(err,res,body){
+              //resolve(body);
              var $ = cheerio.load(iconv.decode(body,'win1251'));
              var cablesTitle = $('.UK_Tblb');
              var cablesDescription = $('.UK_Tbll');
              for(var i = 0; i<cablesTitle.length;i++){
-                 fs.appendFile(file, "\"" + cablesTitle[i].children[0].children[0].data + "\",\"" + categories[j].title + "\",\"" + cablesDescription[i].children[0].data +"\"\n");
+                 //console.log(cablesTitle[i].children[0].attribs.href)
+                //  fs.appendFile(file, "\"" + cablesTitle[i].children[0].children[0].data + "\",\"" + categories[j].title + "\",\"" + cablesDescription[i].children[0].data +"\"\n");
             cables.push({
                 title: cablesTitle[i].children[0].children[0].data,
                 categorie: categories[j].title,
                 description: cablesDescription[i].children[0].data,
+                link: cablesTitle[i].children[0].attribs.href
              })
             }
          })
     }
 })
-
-console.log(cables)
+}).then(value => {
+    console.log(cables)
+})
