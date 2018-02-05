@@ -11,6 +11,7 @@ fs.writeFile(file,"");
 
 var categories =[];
 var cables =[];
+/*
 return new Promise(resolve => {request(opt, function(err,res,body){
     resolve(body);
     var $ = cheerio.load(iconv.decode(body,'win1251'));
@@ -31,7 +32,7 @@ return new Promise(resolve => {request(opt, function(err,res,body){
              encoding: null
          }
           request(newOpt,function(err,res,body){
-              //resolve(body);
+              resolve(body);
              var $ = cheerio.load(iconv.decode(body,'win1251'));
              var cablesTitle = $('.UK_Tblb');
              var cablesDescription = $('.UK_Tbll');
@@ -48,6 +49,33 @@ return new Promise(resolve => {request(opt, function(err,res,body){
          })
     }
 })
-}).then(value => {
-    console.log(cables)
+}).then(value => { return new Promise(resolve => {
+    //for(var i=0; i<cables.length;i++){
+      //  let j=i;
+        var newOpt = {
+             url: opt.url + cables[0].link,
+             encoding: null
+         }
+         //console.log(newOpt.url)
+         request(newOpt, function(err,res,body){
+            var $ = cheerio.load(iconv.decode(body,'win1251'));
+            //var cablesVoltage = $('.UK_Tblb');
+            //for(var i =0; i<cablesVoltage; i++){
+           //     console.log($);
+            //}
+         })
+
+        //}
+})
+})
+*/
+var testOpt = {
+    url: 'http://yuzhcable.info/',//index.php?CAT=12&MRI=120101,
+    //encoding: null
+}
+request (testOpt, function(err,res,body){
+    var $ = cheerio.load(iconv.decode(body, 'win1251'));
+    //var cablesVoltage = $('.UK_Tblb');
+    //let $ = cheerio.load(body);
+    console.log(body);
 })
