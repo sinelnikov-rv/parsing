@@ -11,11 +11,10 @@ fs.writeFile(file,"");
 
 var categories =[];
 var cables =[];
-/*
+
 return new Promise(resolve => {request(opt, function(err,res,body){
     resolve(body);
     var $ = cheerio.load(iconv.decode(body,'win1251'));
-    
     var categoriesTitle = $('.UK_Menu4b');
     for(var i=0; i<categoriesTitle.length;i++){
         categories.push({
@@ -25,57 +24,52 @@ return new Promise(resolve => {request(opt, function(err,res,body){
     }
 })
 }).then(value =>{return new Promise(resolve =>{ 
-    for(var i=0; i<categories.length;i++){
+    async function loop() {for(var i=0; i<categories.length;i++){
         let j=i;
         var newOpt = {
              url: opt.url + categories[i].link,
              encoding: null
          }
           request(newOpt,function(err,res,body){
-              resolve(body);
+            resolve(body);
              var $ = cheerio.load(iconv.decode(body,'win1251'));
              var cablesTitle = $('.UK_Tblb');
              var cablesDescription = $('.UK_Tbll');
              for(var i = 0; i<cablesTitle.length;i++){
                  //console.log(cablesTitle[i].children[0].attribs.href)
-                //  fs.appendFile(file, "\"" + cablesTitle[i].children[0].children[0].data + "\",\"" + categories[j].title + "\",\"" + cablesDescription[i].children[0].data +"\"\n");
+                  //fs.appendFile(file, "\"" + cablesTitle[i].children[0].children[0].data + "\",\"" + categories[j].title + "\",\"" + cablesDescription[i].children[0].data +"\"\n");
             cables.push({
                 title: cablesTitle[i].children[0].children[0].data,
                 categorie: categories[j].title,
                 description: cablesDescription[i].children[0].data,
                 link: cablesTitle[i].children[0].attribs.href
              })
+             
             }
+            //console.log(cables.length)
          })
+         
     }
+}
 })
-}).then(value => { return new Promise(resolve => {
-    //for(var i=0; i<cables.length;i++){
-      //  let j=i;
+})().then(value => { return new Promise(resolve => {
+    console.log(cables.length)
+    for(var i=0; i<cables.length;i++){
+        let j=i;
         var newOpt = {
-             url: opt.url + cables[0].link,
+             url: opt.url + cables[i].link,
              encoding: null
          }
          //console.log(newOpt.url)
          request(newOpt, function(err,res,body){
             var $ = cheerio.load(iconv.decode(body,'win1251'));
-            //var cablesVoltage = $('.UK_Tblb');
+            var cablesVoltage = $('.UK_Tblb');
+            //console.log(cablesVoltage[0].children[0].data)
             //for(var i =0; i<cablesVoltage; i++){
            //     console.log($);
             //}
          })
 
-        //}
+        }
 })
-})
-*/
-var testOpt = {
-    url: 'http://yuzhcable.info/index.php?CAT=12&MRI=120101',
-    encoding: null
-}
-request (testOpt, function(err,res,body){
-    var $ = cheerio.load(body);
-    //var cablesVoltage = $('.UK_Tblb');
-    //let $ = cheerio.load(body);
-    console.log($);
 })
