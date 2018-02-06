@@ -70,12 +70,12 @@ return new Promise(resolve => {request(opt, function(err,res,body){
 })
 */
 var testOpt = {
-    url: 'http://yuzhcable.info/',//index.php?CAT=12&MRI=120101,
-    //encoding: null
+    url: 'http://yuzhcable.info/index.php?CAT=12&MRI=120101',
+    encoding: null
 }
 request (testOpt, function(err,res,body){
-    var $ = cheerio.load(iconv.decode(body, 'win1251'));
+    var $ = cheerio.load(body);
     //var cablesVoltage = $('.UK_Tblb');
     //let $ = cheerio.load(body);
-    console.log(body);
+    console.log($);
 })
