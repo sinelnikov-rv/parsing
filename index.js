@@ -23,36 +23,34 @@ return new Promise(resolve => {request(opt, function(err,res,body){
         })
     }
 })
-}).then(value =>{return new Promise(resolve =>{ 
-    async function loop() {for(var i=0; i<categories.length;i++){
-        let j=i;
+}).then(value =>{new Promise(resolve =>{ 
+    async function secondRequest(){
+        for(var i=0; i<categories.length;i++){
+            let j = i;
         var newOpt = {
              url: opt.url + categories[i].link,
              encoding: null
          }
-          request(newOpt,function(err,res,body){
-            resolve(body);
+        await  request(newOpt,function(err,res,body){
              var $ = cheerio.load(iconv.decode(body,'win1251'));
              var cablesTitle = $('.UK_Tblb');
              var cablesDescription = $('.UK_Tbll');
-             for(var i = 0; i<cablesTitle.length;i++){
+             for(var k = 0; k<cablesTitle.length;k++){
                  //console.log(cablesTitle[i].children[0].attribs.href)
                   //fs.appendFile(file, "\"" + cablesTitle[i].children[0].children[0].data + "\",\"" + categories[j].title + "\",\"" + cablesDescription[i].children[0].data +"\"\n");
             cables.push({
-                title: cablesTitle[i].children[0].children[0].data,
+                title: cablesTitle[k].children[0].children[0].data,
                 categorie: categories[j].title,
-                description: cablesDescription[i].children[0].data,
-                link: cablesTitle[i].children[0].attribs.href
+                description: cablesDescription[k].children[0].data,
+                link: cablesTitle[k].children[0].attribs.href
              })
-             
             }
-            //console.log(cables.length)
          })
-         
     }
 }
+secondRequest();
 })
-})().then(value => { return new Promise(resolve => {
+}).then(value => { return new Promise(resolve => {
     console.log(cables.length)
     for(var i=0; i<cables.length;i++){
         let j=i;
@@ -60,11 +58,11 @@ return new Promise(resolve => {request(opt, function(err,res,body){
              url: opt.url + cables[i].link,
              encoding: null
          }
-         //console.log(newOpt.url)
+         console.log(newOpt.url)
          request(newOpt, function(err,res,body){
             var $ = cheerio.load(iconv.decode(body,'win1251'));
             var cablesVoltage = $('.UK_Tblb');
-            //console.log(cablesVoltage[0].children[0].data)
+            console.log(cablesVoltage[0].children[0].data)
             //for(var i =0; i<cablesVoltage; i++){
            //     console.log($);
             //}
