@@ -21,7 +21,7 @@ rp(opt.url).then(($) => {
 }).then(() => {
   const promises = [];
 
-  for (let i = 0; i < categories.length; i += 1) {
+  for (let i = 10; i < categories.length; i += 1) {
     const j = i;
     const newOpt = {
       url: opt.url + categories[i].link,
@@ -44,8 +44,9 @@ rp(opt.url).then(($) => {
       return cables;
     }));
   }
-  return Promise.all(promises);
+  return Promise.all(promises);  
 }).then((cables) => {
+  const regexp = /\d*\.?\d*x\d*\.?\d*\+?\d*x?\d*\.?\d*\+?\d*\.?x?\d*/;
   let arr = [];
   cables.forEach((arr1) => { arr = arr.concat(arr1); });
   const promises = [];
@@ -58,8 +59,16 @@ rp(opt.url).then(($) => {
     promises.push(rp(newOpt.url).then(($) => {
       const cablesVolteage = $('.UK_Tblb');
       const cablesVolteageArray = [];
+      const cablesCross = $('.UK_Tbb');
+      for (let k = 0; k< cablesCross.length; k += 1){
+        var testCross = cablesCross[k].children[0].data
+        var test = testCross.match(regexp);
+        console.log(arr[j].title);
+        console.log(test[0]);
+      }
       for (let i = 0; i < cablesVolteage.length; i += 1) {
         cablesVolteageArray.push(cablesVolteage[i].children[0].data);
+
       }
       arr[j].voltage = cablesVolteageArray.join();
       return arr[j];
@@ -67,5 +76,5 @@ rp(opt.url).then(($) => {
   }
   return Promise.all(promises);
 }).then((value) => {
-  console.log(value.length);
+  //console.log(value);
 });
