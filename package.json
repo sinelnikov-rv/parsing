@@ -21,7 +21,13 @@
     "cheerio": "^1.0.0-rc.2",
     "fs": "0.0.1-security",
     "iconv-lite": "^0.4.19",
-    "request": "^2.83.0",
-    "request-promise": "^4.2.2"
+    "request": "^2.83.0"
+  },
+  "devDependencies": {
+    "eslint": "^4.17.0",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.6.1"
   }
 }
