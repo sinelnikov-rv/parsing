@@ -9,6 +9,11 @@ const opt = {
 // fs.writeFile(file,"");
 
 const categories = [];
+Array.prototype.unique = function() {
+  return this.filter(function (value, index, self) { 
+    return self.indexOf(value) === index;
+  });
+}
 
 rp(opt.url).then(($) => {
   const categoriesTitle = $('.UK_Menu4b');
@@ -21,7 +26,7 @@ rp(opt.url).then(($) => {
 }).then(() => {
   const promises = [];
 
-  for (let i = 0; i < 5/*categories.length*/; i += 1) {
+  for (let i = 0; i < 1/* categories.length */; i += 1) {
     const j = i;
     const newOpt = {
       url: opt.url + categories[i].link,
@@ -44,9 +49,9 @@ rp(opt.url).then(($) => {
       return cables;
     }));
   }
-  return Promise.all(promises);  
+  return Promise.all(promises);
 }).then((cables) => {
-  const regexp = /\s\d*\.?\s?\d*x\d*\.?\d*\+?\d*x?\d*\.?\d*\+?\d*\.?x?\d*/;
+  const regexp = /\s\d*\.?\s?\d*x\d*\.?\s?\d*\+?\d*x?\d*\.?\d*\+?\d*\.?x?\d*/;
   let arr = [];
   cables.forEach((arr1) => { arr = arr.concat(arr1); });
   const promises = [];
@@ -60,21 +65,29 @@ rp(opt.url).then(($) => {
       const cablesVolteage = $('.UK_Tblb');
       const cablesVolteageArray = [];
       const cablesCross = $('.UK_Tbb');
-      for (let k = 0; k< cablesCross.length; k += 1){
-        var testCross = cablesCross[k].children[0].data
-        var test = testCross.match(regexp);
-        console.log(arr[j].title);
-        console.log(test[0]);
+      const cablesCrossArray = [];
+      for (let k = 0; k < cablesCross.length; k += 1) {
+        const testCross = cablesCross[k].children[0].data;
+        let test = testCross.match(regexp);
+        test = test[0].replace(/\s/g, '');
+        // console.log(arr[j].title);
+        cablesCrossArray.push(test);
+        
       }
+      cablesCrossArray.sort();
+      cablesCrossArray.unique();
+      console.log(arr[j].title + '\n' + cablesCrossArray);
+      arr[j].cross = cablesCrossArray.join();
       for (let i = 0; i < cablesVolteage.length; i += 1) {
         cablesVolteageArray.push(cablesVolteage[i].children[0].data);
-
+        arr[j].voltage = cablesVolteageArray.join();
       }
-      arr[j].voltage = cablesVolteageArray.join();
+      
       return arr[j];
     }));
   }
   return Promise.all(promises);
-}).then((value) => {
-  //console.log(value);
-});
+})
+  .then((value) => {
+    //console.log(value);
+  });
