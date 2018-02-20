@@ -10,7 +10,7 @@ const opt = {
 
 const categories = [];
 Array.prototype.unique = function() {
-  return this.filter(function (value, index, self) { 
+  return this.filter(function (value, index, self) {
     return self.indexOf(value) === index;
   });
 }
@@ -37,7 +37,6 @@ rp(opt.url).then(($) => {
       const cablesDescription = $('.UK_Tbll');
       const cables = [];
       for (let i = 0; i < cablesTitle.length; i += 1) {
-        // console.log(cablesTitle[i].children[0].attribs.href)
         // fs.appendFile(file, "\"" + cablesTitle[i].children[0].children[0].data + "\",\"" + categories[j].title + "\",\"" + cablesDescription[i].children[0].data +"\"\n");
         cables.push({
           title: cablesTitle[i].children[0].children[0].data,
@@ -53,6 +52,7 @@ rp(opt.url).then(($) => {
 }).then((cables) => {
   const regexp = /\s\d*\.?\s?\d*x\d*\.?\s?\d*\+?\d*x?\d*\.?\d*\+?\d*\.?x?\d*/;
   let arr = [];
+  let cablesCrossArrayUnique = [];
   cables.forEach((arr1) => { arr = arr.concat(arr1); });
   const promises = [];
   for (let i = 0; i < arr.length; i += 1) {
@@ -70,14 +70,12 @@ rp(opt.url).then(($) => {
         const testCross = cablesCross[k].children[0].data;
         let test = testCross.match(regexp);
         test = test[0].replace(/\s/g, '');
-        // console.log(arr[j].title);
         cablesCrossArray.push(test);
         
       }
       cablesCrossArray.sort();
-      cablesCrossArray.unique();
-      console.log(arr[j].title + '\n' + cablesCrossArray);
-      arr[j].cross = cablesCrossArray.join();
+      cablesCrossArrayUnique = cablesCrossArray.unique();
+      arr[j].cross = cablesCrossArrayUnique.join();
       for (let i = 0; i < cablesVolteage.length; i += 1) {
         cablesVolteageArray.push(cablesVolteage[i].children[0].data);
         arr[j].voltage = cablesVolteageArray.join();
@@ -89,5 +87,5 @@ rp(opt.url).then(($) => {
   return Promise.all(promises);
 })
   .then((value) => {
-    //console.log(value);
+    console.log(value);
   });
