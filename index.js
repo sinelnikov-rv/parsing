@@ -49,10 +49,10 @@ rp(opt.url).then(($) => {
   const regexp = /\s\d*\.?\s?\d*x\d*\.?\s?\d*\+?\d*x?\d*\.?\d*\+?\d*\.?x?\d*/;
   let arr = [];
   let cablesCrossArrayUnique = [];
+  let items = [];
   cables.forEach((arr1) => { arr = arr.concat(arr1); });
-  let action = (item,index) => {
-    return () => {
-      return new Promise((resolve) => {
+  const action = (item,index) => {
+    new Promise(resolve => {
         const newOpt = {
           url: opt.url + item.link,
           encoding: null,
@@ -77,7 +77,6 @@ rp(opt.url).then(($) => {
                   cross: test
                 })
               }
-              
             }
             cablesCrossArrayUnique = cablesCrossArray.unique();
             item.cross = cablesCrossArrayUnique.join();
@@ -86,22 +85,31 @@ rp(opt.url).then(($) => {
             item.voltage = cablesVolteageArray.join();
             item.variations = variations;
           }
-          resolve(item);
-        });
-      })
-    }
+          items.push(item);
+          
+        })
+    })
     }
     let p = Promise.resolve();
-  arr.forEach(function(item,i){
-    p = p.then(action(item,i))
-  })
+  arr.forEach((item,i) => p = p.then(() => action(item,i)));
+  
+return p.then(() => {
+    console.log(items)
+    //return items;
+    //items.forEach((t)=>
+    //fs.appendFile(file,t.title +"\n"));
+})
 }).then((value) => {
-    console.log(value)
-    /*value.forEach((t) => {
-    //  t.variations.forEach((e) =>{
-       // console.log(t.title + " " + e.voltage + " " + e.cross);
-      }) 
+    // console.log(value)
+    value.forEach((t) => {
+      console.log(t)
+    //   if(t.hasOwnProperty(variations)){
+    //   t.variations.forEach((e) =>{
+    //     console.log(t.title + " " + e.voltage + " " + e.cross);
+    //   })
+    // } else {
+    //   console.log(1)
+    // }
         //fs.appendFile(file, ",variable,," + t.title + ",1,0,visible,,\"" + t.description + "\",,,taxable,,1,,0,0,,,,,1,,,,\"" + t.categorie + "\",,,,,,,,,,,,0,Напряжение,\"" + t.voltage + "\",1,1,Сечение,\"" + t.cross + "\",1,1\n")
-    });
-    */
-  })
+      })
+    })
