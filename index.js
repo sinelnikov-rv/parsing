@@ -1,6 +1,6 @@
 const rp = require('./request');
-// const fs = require('fs');
-// const file = require('./file');
+const fs = require('fs');
+const file = require('./file');
 
 const opt = {
   url: 'http://yuzhcable.info/',
@@ -22,7 +22,7 @@ rp(opt.url).then(($) => {
 }).then(() => {
   const promises = [];
 
-  for (let i = 0; i < categories.length; i += 1) {
+  for (let i = 8; i < 9/*categories.length*/; i += 1) {
     const j = i;
     const newOpt = {
       url: opt.url + categories[i].link,
@@ -63,7 +63,7 @@ rp(opt.url).then(($) => {
         const cablesCrossArray = [];
         const variations = [];
         for (let i = 0; i < cablesVolteage.length; i += 1) {
-          const voltageWOKV = cablesVolteage[i].children[0].data.replace(/\sкВ/, '');
+         const voltageWOKV = cablesVolteage[i].children[0].data.replace(/\sкВ/, '');
           for (let k = 0; k < cablesCross.length; k += 1) {
             const testCross = cablesCross[k].children[0].data;
             let test = testCross.match(regexp);
@@ -89,21 +89,19 @@ rp(opt.url).then(($) => {
   let p = Promise.resolve();
   arr.forEach((item) => p = p.then(() => action(item)));
   return p.then(() => {
-  // console.log(items);
     return items;
-    //  items.forEach((t)=>
-    //  fs.appendFile(file,t.title +"\n"));
   });
 })
   .then((value) => {
     value.forEach((t) => {
-      if (t.variations.length) {
+      console.log(t)
+      if (t.hasOwnProperty('variations')) {
         t.variations.forEach((e) => {
           console.log(t.title + " " + e.voltage + ' ' + e.cross);
         });
       } else {
-        console.log(1);
-      }
       // fs.appendFile(file, ",variable,," + t.title + ",1,0,visible,,\"" + t.description + "\",,,taxable,,1,,0,0,,,,,1,,,,\"" + t.categorie + "\",,,,,,,,,,,,0,Напряжение,\"" + t.voltage + "\",1,1,Сечение,\"" + t.cross + "\",1,1\n")
+        console.log(t.title);
+      }
     });
   });
