@@ -7,6 +7,7 @@ const opt = {
   encoding: null,
 };
 const categories = [];
+const art = 100000;
 Array.prototype.unique = function () {
   return this.filter((value, index, self) => self.indexOf(value) === index);
 };
@@ -22,7 +23,7 @@ rp(opt.url).then(($) => {
 }).then(() => {
   const promises = [];
 
-  for (let i = 8; i < 9/*categories.length*/; i += 1) {
+  for (let i = 1; i < 2/*categories.length*/; i += 1) {
     const j = i;
     const newOpt = {
       url: opt.url + categories[i].link,
@@ -32,12 +33,13 @@ rp(opt.url).then(($) => {
       const cablesTitle = $('.UK_Tblb');
       const cablesDescription = $('.UK_Tbll');
       const cables = [];
-      for (let i = 0; i < cablesTitle.length; i += 1) {
+      for (let k = 0; k < cablesTitle.length; k += 1) {
         cables.push({
-          title: cablesTitle[i].children[0].children[0].data,
+          title: cablesTitle[k].children[0].children[0].data,
+          art: art + ((i + 1) * 1000) + k,
           categorie: categories[j].title,
-          description: cablesDescription[i].children[0].data,
-          link: cablesTitle[i].children[0].attribs.href,
+          description: cablesDescription[k].children[0].data,
+          link: cablesTitle[k].children[0].attribs.href,
         });
       }
       return cables;
@@ -50,58 +52,101 @@ rp(opt.url).then(($) => {
   let cablesCrossArrayUnique = [];
   const items = [];
   cables.forEach((arr1) => { arr = arr.concat(arr1); });
-  const action = (item) => 
-    new Promise(resolve => {
+  const action = item =>
+    new Promise((resolve) => {
       const newOpt = {
         url: opt.url + item.link,
         encoding: null,
       };
       rp(newOpt.url).then(($) => {
-        const cablesVolteage = $('.UK_Tblb');
+        const table = $('.UK_Table tr');
         const cablesVolteageArray = [];
-        const cablesCross = $('.UK_Tbb');
         const cablesCrossArray = [];
         const variations = [];
-        for (let i = 0; i < cablesVolteage.length; i += 1) {
-         const voltageWOKV = cablesVolteage[i].children[0].data.replace(/\sкВ/, '');
-          for (let k = 0; k < cablesCross.length; k += 1) {
-            const testCross = cablesCross[k].children[0].data;
-            let test = testCross.match(regexp);
-            test = test[0].replace(/\s/g, '');
-            cablesCrossArray.push(test);
-            if (testCross.includes(`-${voltageWOKV}`)) {
-              variations.push({
-                voltage: cablesVolteage[i].children[0].data,
-                cross: test,
-              });
+        let voltage = '';
+        for (let j = 2; j < table.length; j += 1) {
+          if (table[j].children[0].children[0].data) {
+            voltage = table[j].children[0].children[0].data/*.replace(/\sкВ/, ' kV')*/;
+            cablesVolteageArray.push(voltage);
+            //console.log(`${item.title} ${voltage}`);
+          } else {
+            //console.log(table[j].children[0].children[0].children[1].children[0].data.match(regexp));
+            let cross = table[j].children[0].children[0].children[1].children[0].data.match(regexp);
+            if (cross !== null) {
+              cross = cross[0].replace(/\s/g, '');
+              cablesCrossArray.push(cross);
+              //console.log(`${item.title} ${cross} ${voltage}`);
+              if (voltage) {
+                variations.push({
+                  cross,
+                  voltage,
+                });
+              } else {
+                variations.push({
+                  cross,
+                });
+              }
             }
           }
-          cablesCrossArrayUnique = cablesCrossArray.unique();
-          item.cross = cablesCrossArrayUnique.join();
-          cablesVolteageArray.push(cablesVolteage[i].children[0].data);
-          item.voltage = cablesVolteageArray.join();
-          item.variations = variations;
         }
-      resolve (item);
+        cablesCrossArrayUnique = cablesCrossArray.unique();
+        item.cross = cablesCrossArrayUnique.join();
+        item.voltage = cablesVolteageArray.join();
+        item.variations = variations;
+        //for (let i = 0; i < cablesVolteage.length; i += 1) {
+        //  const voltageWOKV = cablesVolteage[i].children[0].data.replace(/\sкВ/, '');
+          // for (let k = 0; k < cablesCross.length; k += 1) {
+            // const testCross = cablesCross[k].children[0].data;
+            // let test = testCross.match(regexp);
+            
+            // test = test[0].replace(/\s/g, '');
+            // console.log(test);
+            // cablesCrossArray.push(test);
+            // if (testCross.includes(`-${voltageWOKV}`)) {
+              // variations.push({
+                // voltage: cablesVolteage[i].children[0].data,
+                // cross: test,
+              // });
+            // }
+          // }
+          // cablesCrossArrayUnique = cablesCrossArray.unique();
+          // item.cross = cablesCrossArrayUnique.join();
+          //cablesVolteageArray.push(cablesVolteage[i].children[0].data);
+          // item.voltage = cablesVolteageArray.join();
+          // item.variations = variations;
+        // }
+        resolve(item);
       });
       items.push(item);
     });
   let p = Promise.resolve();
-  arr.forEach((item) => p = p.then(() => action(item)));
-  return p.then(() => {
-    return items;
-  });
+  arr.forEach(item => p = p.then(() => action(item)));
+  return p.then(() => items);
 })
   .then((value) => {
     value.forEach((t) => {
       console.log(t)
-      if (t.hasOwnProperty('variations')) {
+      if (t.hasOwnProperty('variations') && t.variations.length) {
+        if (t.voltage.length) {
+          fs.appendFile(file, ",variable," + t.art + "," + t.title + ",1,0,visible,,\"" + t.description + "\",,,taxable,,1,,0,0,,,,,1,,,,\"" + t.categorie + "\",,,,,,,,,,,,0,Voltage,\"" + t.voltage + "\",1,1,Cross-section,\"" + t.cross + "\",1,1\n")
+        } else {
+          fs.appendFile(file, ",variable,," + t.title + ",1,0,visible,,\"" + t.description + "\",,,taxable,,1,,0,0,,,,,1,,,,\"" + t.categorie + "\",,,,,,,,,,,,0,Cross-section,\"" + t.cross + "\",1,1,,,,\n");
+        }
         t.variations.forEach((e) => {
-          console.log(t.title + " " + e.voltage + ' ' + e.cross);
+          if (e.voltage) {
+            // console.log(1);
+            fs.appendFile(file, ",variation,," + t.title + ",1,0,visible,,,,,taxable,parent,1,,0,0,,,,,1,,,,,,,,,,"+t.art+",,,,,,0,voltage,\"" + e.voltage + "\",1,1,Cross-section,\"" + e.cross + "\",1,1\n")
+            // console.log(`${t.title} ${e.voltage} ${e.cross}`);
+          } else {
+            // console.log(2);
+            // fs.appendFile(file, ",variable,," + t.title + ",1,0,visible,,\"" + t.description + "\",,,taxable,,1,,0,0,,,,,1,,,,\"" + t.categorie + "\",,,,,,,,,,,,0,Cross-section,\"" + t.cross + "\",1,1,,,,\n");
+            // console.log(`${t.title} ${t.cross} ${e.cross}`);
+          }
         });
       } else {
-      // fs.appendFile(file, ",variable,," + t.title + ",1,0,visible,,\"" + t.description + "\",,,taxable,,1,,0,0,,,,,1,,,,\"" + t.categorie + "\",,,,,,,,,,,,0,Напряжение,\"" + t.voltage + "\",1,1,Сечение,\"" + t.cross + "\",1,1\n")
-        console.log(t.title);
+        fs.appendFile(file, ",variable,," + t.title + ",1,0,visible,,\"" + t.description + "\",,,taxable,,1,,0,0,,,,,1,,,,\"" + t.categorie + "\",,,,,,,,,,,,0,,,,,,,,\n")
+        // console.log(`${t.title} ${t.cross}`);
       }
+      // fs.appendFile(file, ",variable,," + t.title + ",1,0,visible,,\"" + t.description + "\",,,taxable,,1,,0,0,,,,,1,,,,\"" + t.categorie + "\",,,,,,,,,,,,0,Напряжение,\"" + t.voltage + "\",1,1,Сечение,\"" + t.cross + "\",1,1\n")
     });
   });
