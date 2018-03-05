@@ -23,7 +23,7 @@ rp(opt.url).then(($) => {
 }).then(() => {
   const promises = [];
 
-  for (let i = 1; i < 2/*categories.length*/; i += 1) {
+  for (let i = 0; i < categories.length; i += 1) {
     const j = i;
     const newOpt = {
       url: opt.url + categories[i].link,
@@ -125,17 +125,17 @@ rp(opt.url).then(($) => {
 })
   .then((value) => {
     value.forEach((t) => {
-      console.log(t)
+      //console.log(t)
       if (t.hasOwnProperty('variations') && t.variations.length) {
         if (t.voltage.length) {
-          fs.appendFile(file, ",variable," + t.art + "," + t.title + ",1,0,visible,,\"" + t.description + "\",,,taxable,,1,,0,0,,,,,1,,,,\"" + t.categorie + "\",,,,,,,,,,,,0,Voltage,\"" + t.voltage + "\",1,1,Cross-section,\"" + t.cross + "\",1,1\n")
+          fs.appendFileSync(file, ",variable," + t.art + "," + t.title + ",1,0,visible,,\"" + t.description + "\",,,taxable,,1,,0,0,,,,,1,,,,\"" + t.categorie + "\",,,,,,,,,,,,0,\"Напряжение\",\"" + t.voltage + "\",1,1,\"Сечение\",\"" + t.cross + "\",1,1\n")
         } else {
-          fs.appendFile(file, ",variable,," + t.title + ",1,0,visible,,\"" + t.description + "\",,,taxable,,1,,0,0,,,,,1,,,,\"" + t.categorie + "\",,,,,,,,,,,,0,Cross-section,\"" + t.cross + "\",1,1,,,,\n");
+          fs.appendFileSync(file, ",variable,," + t.title + ",1,0,visible,,\"" + t.description + "\",,,taxable,,1,,0,0,,,,,1,,,,\"" + t.categorie + "\",,,,,,,,,,,,0,\"Сечение\",\"" + t.cross + "\",1,1,,,,\n");
         }
         t.variations.forEach((e) => {
           if (e.voltage) {
             // console.log(1);
-            fs.appendFile(file, ",variation,," + t.title + ",1,0,visible,,,,,taxable,parent,1,,0,0,,,,,1,,,,,,,,,,"+t.art+",,,,,,0,voltage,\"" + e.voltage + "\",1,1,Cross-section,\"" + e.cross + "\",1,1\n")
+            fs.appendFileSync(file, ",variation,," + t.title + ",1,0,visible,,,,,taxable,parent,1,,0,0,,,,,1,,,,,,,,,,"+t.art+",,,,,,0,\"Напряжение\",\"" + e.voltage + "\",1,1,\"Сечение\",\"" + e.cross + "\",1,1\n")
             // console.log(`${t.title} ${e.voltage} ${e.cross}`);
           } else {
             // console.log(2);
@@ -144,7 +144,7 @@ rp(opt.url).then(($) => {
           }
         });
       } else {
-        fs.appendFile(file, ",variable,," + t.title + ",1,0,visible,,\"" + t.description + "\",,,taxable,,1,,0,0,,,,,1,,,,\"" + t.categorie + "\",,,,,,,,,,,,0,,,,,,,,\n")
+        fs.appendFileSync(file, ",variable,," + t.title + ",1,0,visible,,\"" + t.description + "\",,,taxable,,1,,0,0,,,,,1,,,,\"" + t.categorie + "\",,,,,,,,,,,,0,,,,,,,,\n")
         // console.log(`${t.title} ${t.cross}`);
       }
       // fs.appendFile(file, ",variable,," + t.title + ",1,0,visible,,\"" + t.description + "\",,,taxable,,1,,0,0,,,,,1,,,,\"" + t.categorie + "\",,,,,,,,,,,,0,Напряжение,\"" + t.voltage + "\",1,1,Сечение,\"" + t.cross + "\",1,1\n")
