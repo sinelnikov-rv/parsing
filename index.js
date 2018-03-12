@@ -90,28 +90,6 @@ rp(opt.url).then(($) => {
         item.cross = cablesCrossArrayUnique.join();
         item.voltage = cablesVolteageArray.join();
         item.variations = variations;
-        //for (let i = 0; i < cablesVolteage.length; i += 1) {
-        //  const voltageWOKV = cablesVolteage[i].children[0].data.replace(/\sкВ/, '');
-          // for (let k = 0; k < cablesCross.length; k += 1) {
-            // const testCross = cablesCross[k].children[0].data;
-            // let test = testCross.match(regexp);
-            
-            // test = test[0].replace(/\s/g, '');
-            // console.log(test);
-            // cablesCrossArray.push(test);
-            // if (testCross.includes(`-${voltageWOKV}`)) {
-              // variations.push({
-                // voltage: cablesVolteage[i].children[0].data,
-                // cross: test,
-              // });
-            // }
-          // }
-          // cablesCrossArrayUnique = cablesCrossArray.unique();
-          // item.cross = cablesCrossArrayUnique.join();
-          //cablesVolteageArray.push(cablesVolteage[i].children[0].data);
-          // item.voltage = cablesVolteageArray.join();
-          // item.variations = variations;
-        // }
         resolve(item);
       });
       items.push(item);
@@ -136,7 +114,7 @@ rp(opt.url).then(($) => {
           }
         });
       } else {
-        fs.appendFileSync(file, ",variable," + t.art + ",\"" + t.title + "\",1,0,visible,,\"" + t.description + "\",,,taxable,,1,,0,0,,,,,1,,,,\"" + t.categorie + "\",,,,,,,,,,,,0,,,,,,,,\n")
+        fs.appendFileSync(file, ",simple," + t.art + ",\"" + t.title + "\",1,0,visible,,\"" + t.description + "\",,,taxable,,1,,0,0,,,,,1,,,,\"" + t.categorie + "\",,,,,,,,,,,,0,,,,,,,,\n")
       }
     });
   });
